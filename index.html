@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Explorer: สนุกทายศัพท์อังกฤษ ป.3</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Mali (ไทย) & Fredoka (อังกฤษน่ารักอ่านง่าย) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Mali:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Fredoka', 'Mali', 'sans-serif'],
+                        thai: ['Mali', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            mint: '#A8E6CF',
+                            mintDark: '#56B894',
+                            cream: '#FDFAF0',
+                            peach: '#FFD3B6',
+                            coral: '#FF8B94',
+                            amber: '#FFAA33',
+                            blue: '#B5E2FA',
+                            blueDark: '#4A90E2',
+                            text: '#2D3748'
+                        }
+                    },
+                    boxShadow: {
+                        'bouncy': '0 8px 0px 0px rgba(0,0,0,0.1)',
+                        'bouncy-hover': '0 4px 0px 0px rgba(0,0,0,0.1)',
+                        'card': '0 10px 25px -5px rgba(100, 116, 139, 0.12)'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F8FBF8;
+            background-image: radial-gradient(#d1fae5 1.5px, transparent 1.5px), radial-gradient(#d1fae5 1.5px, #F8FBF8 1.5px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .btn-choice {
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-choice:active {
+            transform: translateY(4px);
+        }
+
+        /* Pulse & Bounce animations */
+        @keyframes gentle-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-gentle {
+            animation: gentle-bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes pop-in {
+            0% { transform: scale(0.6); opacity: 0; }
+            80% { transform: scale(1.08); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+        .animate-pop {
+            animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-brand-text flex flex-col justify-between p-3 sm:p-6 antialiased">
+
+    <!-- Top Navigation / Header -->
+    <header class="max-w-3xl w-full mx-auto flex items-center justify-between py-2 px-4 bg-white/90 backdrop-blur rounded-3xl shadow-sm border border-emerald-100">
+        <div class="flex items-center space-x-3">
+            <span class="text-3xl filter drop-shadow">🌟</span>
+            <div>
+                <h1 class="font-bold text-lg sm:text-xl text-emerald-800 tracking-wide">Word Explorer</h1>
+                <p class="text-xs text-emerald-600 font-thai">เกมเติมตัวอักษรภาษาอังกฤษ ป.3</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <!-- Sound Toggle -->
+            <button id="soundToggleBtn" onclick="toggleSound()" class="p-2.5 bg-emerald-50 hover:bg-emerald-100 active:scale-95 text-emerald-700 rounded-2xl transition" title="เปิด/ปิดเสียง">
+                <svg id="soundOnIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                </svg>
+                <svg id="soundOffIcon" class="w-6 h-6 hidden text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-2xl w-full mx-auto my-auto py-4">
+
+        <!-- SCREEN 1: WELCOME / START SCREEN -->
+        <div id="startScreen" class="bg-white rounded-[2rem] p-6 sm:p-10 text-center shadow-card border border-emerald-100 flex flex-col items-center">
+            <div class="w-28 h-28 bg-emerald-100 rounded-full flex items-center justify-center text-5xl mb-4 animate-gentle shadow-inner">
+                🎯
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-bold text-emerald-800 mb-2 font-thai">พร้อมสำรวจคำศัพท์หรือยัง?</h2>
+            <p class="text-gray-500 font-thai text-base sm:text-lg mb-6 max-w-md">
+                ทายตัวอักษรภาษาอังกฤษที่หายไป ตอบถูกรับ 1 คะแนน ภายในเวลา 20 วินาที พร้อมภาพและเสียงอ่านคำศัพท์แสนสนุก!
+            </p>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full max-w-md mb-8 text-left text-sm font-thai text-gray-600">
+                <div class="bg-emerald-50/70 p-3 rounded-2xl flex items-center space-x-2">
+                    <span class="text-xl">⏱️</span>
+                    <span>ข้อละ 20 วินาที</span>
+                </div>
+                <div class="bg-amber-50/70 p-3 rounded-2xl flex items-center space-x-2">
+                    <span class="text-xl">⭐</span>
+                    <span>1 คะแนน / ข้อ</span>
+                </div>
+                <div class="bg-blue-50/70 p-3 rounded-2xl flex items-center space-x-2 col-span-2 sm:col-span-1">
+                    <span class="text-xl">🔊</span>
+                    <span>เสียงอ่านสำเนียงแท้</span>
+                </div>
+            </div>
+
+            <button onclick="startGame()" class="w-full sm:w-64 py-4 px-8 bg-emerald-500 hover:bg-emerald-600 active:translate-y-1 text-white font-bold text-xl rounded-2xl shadow-bouncy hover:shadow-bouncy-hover transition-all duration-150 flex items-center justify-center space-x-2">
+                <span>เริ่มเล่นเกม</span>
+                <span class="text-2xl">🚀</span>
+            </button>
+        </div>
+
+        <!-- SCREEN 2: GAMEPLAY SCREEN -->
+        <div id="gameScreen" class="hidden bg-white rounded-[2rem] p-5 sm:p-8 shadow-card border border-emerald-100">
+            <!-- Status Bar: Score, Streak, Question Index -->
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center space-x-2 bg-emerald-50 px-3.5 py-1.5 rounded-full border border-emerald-100">
+                    <span class="text-lg">⭐</span>
+                    <span class="font-bold text-emerald-800 text-base" id="scoreDisplay">คะแนน: 0</span>
+                </div>
+                <div id="streakBadge" class="hidden flex items-center space-x-1 bg-amber-50 px-3 py-1.5 rounded-full border border-amber-200 text-amber-700 font-bold text-sm animate-pop">
+                    <span>🔥</span>
+                    <span id="streakDisplay">2x Streak!</span>
+                </div>
+                <div class="text-sm font-bold text-gray-400 bg-gray-50 px-3 py-1.5 rounded-full" id="questionCounter">
+                    ข้อที่ 1 / 15
+                </div>
+            </div>
+
+            <!-- Timer Progress Bar -->
+            <div class="w-full bg-gray-100 rounded-full h-3.5 mb-6 overflow-hidden p-0.5 border border-gray-100">
+                <div id="timerBar" class="bg-emerald-400 h-full rounded-full transition-all duration-200 ease-linear" style="width: 100%;"></div>
+            </div>
+
+            <!-- Hint & Thai Meaning -->
+            <div class="text-center mb-3">
+                <span class="inline-block px-3 py-1 bg-amber-100 text-amber-800 text-xs font-semibold rounded-full uppercase tracking-wider mb-1" id="categoryBadge">
+                    Category
+                </span>
+                <h3 class="text-lg sm:text-xl font-thai text-gray-700 font-bold" id="thaiMeaning">
+                    ความหมายภาษาไทย
+                </h3>
+            </div>
+
+            <!-- Illustration Box (Default placeholder & SVG revealed on answer) -->
+            <div class="w-full h-44 sm:h-52 bg-emerald-50/60 rounded-3xl mb-6 flex items-center justify-center p-3 relative overflow-hidden border border-emerald-100/60 transition-all duration-300" id="illustrationContainer">
+                <div id="illustrationGraphic" class="w-full h-full flex items-center justify-center">
+                    <!-- SVG Injected here via JS -->
+                </div>
+                <button id="ttsButton" onclick="speakCurrentWord()" class="hidden absolute bottom-3 right-3 p-3 bg-white/90 hover:bg-white text-emerald-700 rounded-full shadow-md hover:scale-105 active:scale-95 transition" title="ฟังเสียงอ่านอีกครั้ง">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Missing Word Display (Letter slots) -->
+            <div class="flex justify-center items-center gap-2 sm:gap-3 mb-6" id="wordLettersContainer">
+                <!-- Dynamically filled with letter boxes -->
+            </div>
+
+            <!-- Answer Feedback Banner -->
+            <div id="feedbackBanner" class="text-center h-8 mb-4 font-bold text-base sm:text-lg flex items-center justify-center"></div>
+
+            <!-- Choices Grid (4 big buttons) -->
+            <div class="grid grid-cols-2 gap-3 sm:gap-4 max-w-md mx-auto" id="choicesGrid">
+                <!-- 4 choice buttons injected here -->
+            </div>
+        </div>
+
+        <!-- SCREEN 3: RESULTS / SUMMARY SCREEN -->
+        <div id="resultScreen" class="hidden bg-white rounded-[2rem] p-6 sm:p-10 text-center shadow-card border border-emerald-100">
+            <div id="resultEmoji" class="text-6xl mb-3 animate-gentle">🎉</div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-1 font-thai" id="resultTitle">ยอดเยี่ยมมาก!</h2>
+            <p class="text-gray-500 font-thai text-sm sm:text-base mb-4" id="resultSubtitle">น้องทำคะแนนได้ดีเยี่ยม พร้อมเก่งภาษาอังกฤษขึ้นอีกขั้น</p>
+
+            <!-- Star Rating -->
+            <div class="flex justify-center space-x-2 text-3xl sm:text-4xl mb-6" id="starsContainer">
+                <span>⭐</span><span>⭐</span><span>⭐</span>
+            </div>
+
+            <!-- Score Summary Card -->
+            <div class="bg-emerald-50 rounded-2xl p-4 sm:p-5 mb-6 max-w-sm mx-auto border border-emerald-100">
+                <div class="flex justify-between items-center py-1 border-b border-emerald-200/60 font-thai">
+                    <span class="text-gray-600">คะแนนที่ได้:</span>
+                    <span class="font-bold text-emerald-800 text-xl font-sans" id="finalScoreText">15 / 15</span>
+                </div>
+                <div class="flex justify-between items-center py-1 border-b border-emerald-200/60 font-thai">
+                    <span class="text-gray-600">ตอบถูกติดต่อกันสูงสุด:</span>
+                    <span class="font-bold text-amber-600 text-lg font-sans" id="maxStreakText">5 ข้อ</span>
+                </div>
+                <div class="flex justify-between items-center py-1 font-thai">
+                    <span class="text-gray-600">ความแม่นยำ:</span>
+                    <span class="font-bold text-blue-600 text-lg font-sans" id="accuracyText">100%</span>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-center gap-3 max-w-md mx-auto">
+                <button onclick="startGame()" class="flex-1 py-3.5 px-6 bg-emerald-500 hover:bg-emerald-600 active:translate-y-1 text-white font-bold rounded-2xl shadow-bouncy hover:shadow-bouncy-hover transition-all text-base sm:text-lg flex items-center justify-center space-x-2">
+                    <span>เล่นอีกครั้ง</span>
+                    <span>🔄</span>
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center text-xs text-gray-400 font-thai py-2">
+        ออกแบบเพื่อพัฒนาทักษะการเรียนรู้คำศัพท์ภาษาอังกฤษสำหรับนักเรียนชั้น ป.3 📚✨
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ============================================================
+           1. VOCABULARY DATABASE WITH CUSTOM DETAILED VECTOR SVGS
+           ============================================================ */
+        const VOCABULARY_LIST = [
+            {
+                word: "APPLE",
+                meaning: "แอปเปิ้ล (ผลไม้สีแดงหวานกรอบ)",
+                category: "ผลไม้ (Fruit)",
+                missingIndex: 2, // P -> AP_LE
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Leaf -->
+                        <path d="M100 50 C115 30 140 35 140 50 C140 65 115 65 100 50 Z" fill="#48BB78"/>
+                        <!-- Stem -->
+                        <path d="M100 50 C98 35 105 20 112 15" stroke="#795548" stroke-width="6" stroke-linecap="round" fill="none"/>
+                        <!-- Apple Body -->
+                        <path d="M100 65 C80 45 40 50 35 90 C30 135 60 175 100 175 C140 175 170 135 165 90 C160 50 120 45 100 65 Z" fill="#F56565"/>
+                        <!-- Highlight -->
+                        <ellipse cx="65" cy="95" rx="10" ry="25" fill="#FEB2B2" opacity="0.6" transform="rotate(-20 65 95)"/>
+                        <!-- Cute Face -->
+                        <circle cx="85" cy="115" r="4" fill="#2D3748"/>
+                        <circle cx="115" cy="115" r="4" fill="#2D3748"/>
+                        <path d="M96 126 Q100 132 104 126" stroke="#2D3748" stroke-width="3" stroke-linecap="round" fill="none"/>
+                        <circle cx="75" cy="122" r="5" fill="#FEB2B2"/>
+                        <circle cx="125" cy="122" r="5" fill="#FEB2B2"/>
+                      </svg>`
+            },
+            {
+                word: "BANANA",
+                meaning: "กล้วย (ผลไม้สีเหลือง ลิงชอบกิน)",
+                category: "ผลไม้ (Fruit)",
+                missingIndex: 3, // A -> BAN_NA
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <path d="M45 140 C55 170 120 175 155 110 C165 90 170 65 165 45 C160 40 150 45 150 55 C150 75 140 110 115 130 C90 148 60 145 45 140 Z" fill="#F6E05E" stroke="#D69E2E" stroke-width="3"/>
+                        <path d="M165 45 L175 35" stroke="#744210" stroke-width="6" stroke-linecap="round"/>
+                        <circle cx="125" cy="100" r="4" fill="#2D3748"/>
+                        <circle cx="140" cy="85" r="4" fill="#2D3748"/>
+                        <path d="M130 98 Q136 104 140 94" stroke="#2D3748" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                        <circle cx="116" cy="105" r="4" fill="#F6AD55"/>
+                        <circle cx="148" cy="88" r="4" fill="#F6AD55"/>
+                      </svg>`
+            },
+            {
+                word: "TIGER",
+                meaning: "เสือ (สัตว์ป่าดุร้าย ลายพาดกลอน)",
+                category: "สัตว์ (Animal)",
+                missingIndex: 1, // I -> T_GER
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Ears -->
+                        <circle cx="55" cy="65" r="22" fill="#ED8936"/>
+                        <circle cx="55" cy="65" r="12" fill="#FEEBC8"/>
+                        <circle cx="145" cy="65" r="22" fill="#ED8936"/>
+                        <circle cx="145" cy="65" r="12" fill="#FEEBC8"/>
+                        <!-- Head -->
+                        <ellipse cx="100" cy="105" rx="55" ry="45" fill="#ED8936"/>
+                        <!-- White cheeks -->
+                        <ellipse cx="70" cy="120" rx="18" ry="14" fill="#FFF"/>
+                        <ellipse cx="130" cy="120" rx="18" ry="14" fill="#FFF"/>
+                        <!-- Stripes -->
+                        <path d="M100 62 L100 78 M90 66 L94 76 M110 66 L106 76" stroke="#2D3748" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M48 105 L62 105 M48 115 L60 113" stroke="#2D3748" stroke-width="4" stroke-linecap="round"/>
+                        <path d="M152 105 L138 105 M152 115 L140 113" stroke="#2D3748" stroke-width="4" stroke-linecap="round"/>
+                        <!-- Eyes -->
+                        <circle cx="82" cy="100" r="5" fill="#2D3748"/>
+                        <circle cx="118" cy="100" r="5" fill="#2D3748"/>
+                        <!-- Nose and Mouth -->
+                        <polygon points="95,112 105,112 100,118" fill="#E53E3E"/>
+                        <path d="M100 118 L100 124 M94 124 Q100 128 106 124" stroke="#2D3748" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                      </svg>`
+            },
+            {
+                word: "MONKEY",
+                meaning: "ลิง (สัตว์แสนซน ชอบปีนป่ายต้นไม้)",
+                category: "สัตว์ (Animal)",
+                missingIndex: 4, // E -> MONK_Y
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Ears -->
+                        <circle cx="45" cy="95" r="20" fill="#975A16"/>
+                        <circle cx="45" cy="95" r="12" fill="#FBD38D"/>
+                        <circle cx="155" cy="95" r="20" fill="#975A16"/>
+                        <circle cx="155" cy="95" r="12" fill="#FBD38D"/>
+                        <!-- Head -->
+                        <circle cx="100" cy="95" r="48" fill="#975A16"/>
+                        <!-- Face Mask -->
+                        <ellipse cx="82" cy="85" rx="18" ry="18" fill="#FBD38D"/>
+                        <ellipse cx="118" cy="85" rx="18" ry="18" fill="#FBD38D"/>
+                        <ellipse cx="100" cy="108" rx="28" ry="20" fill="#FBD38D"/>
+                        <!-- Eyes -->
+                        <circle cx="84" cy="86" r="4" fill="#2D3748"/>
+                        <circle cx="116" cy="86" r="4" fill="#2D3748"/>
+                        <!-- Snout -->
+                        <ellipse cx="100" cy="104" rx="3" ry="2" fill="#744210"/>
+                        <path d="M92 114 Q100 122 108 114" stroke="#744210" stroke-width="3" fill="none" stroke-linecap="round"/>
+                      </svg>`
+            },
+            {
+                word: "PENCIL",
+                meaning: "ดินสอ (อุปกรณ์สำหรับเขียนหนังสือ)",
+                category: "เครื่องเขียน (Classroom)",
+                missingIndex: 2, // N -> PE_CIL
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <g transform="rotate(45 100 100)">
+                            <!-- Eraser -->
+                            <rect x="85" y="15" width="30" height="25" rx="5" fill="#FC8181"/>
+                            <!-- Metal ferrule -->
+                            <rect x="85" y="40" width="30" height="15" fill="#CBD5E0"/>
+                            <line x1="85" y1="47" x2="115" y2="47" stroke="#A0AEC0" stroke-width="2"/>
+                            <!-- Body -->
+                            <rect x="85" y="55" width="30" height="90" fill="#F6E05E"/>
+                            <line x1="95" y1="55" x2="95" y2="145" stroke="#ECC94B" stroke-width="3"/>
+                            <line x1="105" y1="55" x2="105" y2="145" stroke="#ECC94B" stroke-width="3"/>
+                            <!-- Wood tip -->
+                            <polygon points="85,145 115,145 100,175" fill="#ED8936"/>
+                            <!-- Graphite lead -->
+                            <polygon points="95,165 105,165 100,175" fill="#2D3748"/>
+                        </g>
+                      </svg>`
+            },
+            {
+                word: "SCHOOL",
+                meaning: "โรงเรียน (สถานที่เรียนหนังสือกับเพื่อนๆ)",
+                category: "สถานที่ (Places)",
+                missingIndex: 4, // O -> SCHO_L
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Roof / Gable -->
+                        <polygon points="100,35 35,80 165,80" fill="#E53E3E"/>
+                        <!-- Clock tower -->
+                        <rect x="85" y="25" width="30" height="25" fill="#DD6B20"/>
+                        <circle cx="100" cy="35" r="8" fill="#FFF"/>
+                        <line x1="100" y1="35" x2="100" y2="31" stroke="#2D3748" stroke-width="1.5"/>
+                        <line x1="100" y1="35" x2="103" y2="35" stroke="#2D3748" stroke-width="1.5"/>
+                        <!-- Main Building -->
+                        <rect x="45" y="80" width="110" height="75" fill="#FBD38D"/>
+                        <!-- Windows -->
+                        <rect x="58" y="92" width="20" height="20" rx="3" fill="#63B3ED"/>
+                        <rect x="122" y="92" width="20" height="20" rx="3" fill="#63B3ED"/>
+                        <!-- Door -->
+                        <rect x="90" y="115" width="20" height="40" rx="3" fill="#795548"/>
+                        <circle cx="106" cy="135" r="2" fill="#ECC94B"/>
+                      </svg>`
+            },
+            {
+                word: "ORANGE",
+                meaning: "ส้ม (ผลไม้รสเปรี้ยวอมหวาน มีวิตามินซี)",
+                category: "ผลไม้ (Fruit)",
+                missingIndex: 2, // A -> OR_NGE
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Leaf -->
+                        <path d="M100 48 C115 30 145 35 140 55 C130 65 110 58 100 48 Z" fill="#48BB78"/>
+                        <circle cx="100" cy="50" r="4" fill="#744210"/>
+                        <!-- Orange Body -->
+                        <circle cx="100" cy="110" r="55" fill="#ED8936"/>
+                        <!-- Dots texture -->
+                        <circle cx="85" cy="85" r="1.5" fill="#DD6B20"/>
+                        <circle cx="120" cy="90" r="1.5" fill="#DD6B20"/>
+                        <circle cx="130" cy="130" r="1.5" fill="#DD6B20"/>
+                        <circle cx="70" cy="125" r="1.5" fill="#DD6B20"/>
+                        <!-- Cute smiling face -->
+                        <circle cx="86" cy="108" r="4" fill="#FFF"/>
+                        <circle cx="114" cy="108" r="4" fill="#FFF"/>
+                        <circle cx="87" cy="108" r="2.5" fill="#2D3748"/>
+                        <circle cx="115" cy="108" r="2.5" fill="#2D3748"/>
+                        <path d="M93 118 Q100 125 107 118" stroke="#FFF" stroke-width="3" stroke-linecap="round" fill="none"/>
+                      </svg>`
+            },
+            {
+                word: "RABBIT",
+                meaning: "กระต่าย (สัตว์หูยาว กระโดดดึ๋งๆ ชอบกินแครอท)",
+                category: "สัตว์ (Animal)",
+                missingIndex: 3, // B -> RAB_IT
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Ears -->
+                        <ellipse cx="75" cy="50" rx="12" ry="38" fill="#FFF" stroke="#E2E8F0" stroke-width="2"/>
+                        <ellipse cx="75" cy="50" rx="6" ry="26" fill="#FED7D7"/>
+                        <ellipse cx="125" cy="50" rx="12" ry="38" fill="#FFF" stroke="#E2E8F0" stroke-width="2"/>
+                        <ellipse cx="125" cy="50" rx="6" ry="26" fill="#FED7D7"/>
+                        <!-- Head -->
+                        <ellipse cx="100" cy="115" rx="46" ry="40" fill="#FFF" stroke="#E2E8F0" stroke-width="2"/>
+                        <!-- Eyes -->
+                        <ellipse cx="80" cy="108" rx="4.5" ry="6" fill="#2D3748"/>
+                        <ellipse cx="120" cy="108" rx="4.5" ry="6" fill="#2D3748"/>
+                        <circle cx="82" cy="105" r="1.5" fill="#FFF"/>
+                        <circle cx="122" cy="105" r="1.5" fill="#FFF"/>
+                        <!-- Pink Cheeks -->
+                        <circle cx="68" cy="120" r="6" fill="#FED7D7"/>
+                        <circle cx="132" cy="120" r="6" fill="#FED7D7"/>
+                        <!-- Nose and Mouth -->
+                        <polygon points="97,117 103,117 100,121" fill="#FC8181"/>
+                        <path d="M96 123 Q100 127 104 123" stroke="#A0AEC0" stroke-width="2" fill="none" stroke-linecap="round"/>
+                      </svg>`
+            },
+            {
+                word: "DOCTOR",
+                meaning: "คุณหมอ (ผู้รักษาคนไข้ให้หายป่วย)",
+                category: "อาชีพ (Jobs)",
+                missingIndex: 1, // O -> D_CTOR
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Coat / Body -->
+                        <path d="M55 165 C55 130 70 120 100 120 C130 120 145 130 145 165 Z" fill="#E2E8F0"/>
+                        <polygon points="100,120 85,150 115,150" fill="#3182CE"/>
+                        <polygon points="100,120 95,140 100,145 105,140" fill="#E53E3E"/>
+                        <!-- Head -->
+                        <circle cx="100" cy="80" r="32" fill="#FEEBC8"/>
+                        <!-- Hair -->
+                        <path d="M68 80 C68 55 80 48 100 48 C120 48 132 55 132 80 C125 70 110 70 100 70 C90 70 75 70 68 80 Z" fill="#4A5568"/>
+                        <!-- Eyes & Smile -->
+                        <circle cx="88" cy="82" r="3.5" fill="#2D3748"/>
+                        <circle cx="112" cy="82" r="3.5" fill="#2D3748"/>
+                        <path d="M94 94 Q100 99 106 94" stroke="#744210" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <!-- Stethoscope -->
+                        <path d="M85 125 C85 145 115 145 115 125" stroke="#4A5568" stroke-width="3" fill="none"/>
+                        <circle cx="100" cy="145" r="5" fill="#CBD5E0"/>
+                      </svg>`
+            },
+            {
+                word: "FLOWER",
+                meaning: "ดอกไม้ (มีกลีบสวยงามและกลิ่นหอม)",
+                category: "ธรรมชาติ (Nature)",
+                missingIndex: 3, // W -> FLO_ER
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Stem and Leaf -->
+                        <path d="M100 110 Q98 145 100 175" stroke="#48BB78" stroke-width="6" stroke-linecap="round" fill="none"/>
+                        <path d="M100 145 C120 135 130 145 125 155 C115 160 102 152 100 145 Z" fill="#48BB78"/>
+                        <!-- Petals -->
+                        <circle cx="100" cy="70" r="22" fill="#F687B3"/>
+                        <circle cx="128" cy="88" r="22" fill="#F687B3"/>
+                        <circle cx="118" cy="120" r="22" fill="#F687B3"/>
+                        <circle cx="82" cy="120" r="22" fill="#F687B3"/>
+                        <circle cx="72" cy="88" r="22" fill="#F687B3"/>
+                        <!-- Flower Center -->
+                        <circle cx="100" cy="98" r="20" fill="#F6E05E"/>
+                        <!-- Cute Face -->
+                        <circle cx="93" cy="96" r="3" fill="#744210"/>
+                        <circle cx="107" cy="96" r="3" fill="#744210"/>
+                        <path d="M97 103 Q100 107 103 103" stroke="#744210" stroke-width="2" fill="none" stroke-linecap="round"/>
+                      </svg>`
+            },
+            {
+                word: "YELLOW",
+                meaning: "สีเหลือง (สีของแสงอาทิตย์และกล้วยสุก)",
+                category: "สี (Colors)",
+                missingIndex: 1, // E -> Y_LLOW
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Sun with sunglasses -->
+                        <g transform="translate(100 100)">
+                            <!-- Sun rays -->
+                            <path d="M0 -65 L0 -50 M0 50 L0 65 M-65 0 L-50 0 M50 0 L65 0 M-45 -45 L-35 -35 M45 45 L35 35 M-45 45 L-35 35 M45 -45 L35 -35" stroke="#F6AD55" stroke-width="6" stroke-linecap="round"/>
+                            <!-- Sun Body -->
+                            <circle cx="0" cy="0" r="42" fill="#ECC94B"/>
+                            <!-- Sunglasses -->
+                            <rect x="-30" y="-12" width="26" height="18" rx="4" fill="#2D3748"/>
+                            <rect x="4" y="-12" width="26" height="18" rx="4" fill="#2D3748"/>
+                            <line x1="-4" y1="-5" x2="4" y2="-5" stroke="#2D3748" stroke-width="4"/>
+                            <!-- Big smile -->
+                            <path d="M-15 15 Q0 26 15 15" stroke="#C05621" stroke-width="4" stroke-linecap="round" fill="none"/>
+                        </g>
+                      </svg>`
+            },
+            {
+                word: "MONEY",
+                meaning: "เงิน (ใช้สำหรับซื้อของและหยอดกระปุก)",
+                category: "สิ่งของ (Objects)",
+                missingIndex: 2, // N -> MO_EY
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Banknote -->
+                        <rect x="35" y="60" width="130" height="80" rx="10" fill="#68D391" stroke="#38A169" stroke-width="3"/>
+                        <circle cx="100" cy="100" r="22" fill="#9AE6B4"/>
+                        <text x="100" y="108" font-size="24" font-weight="bold" fill="#22543D" text-anchor="middle" font-family="sans-serif">$</text>
+                        <!-- Coin stack -->
+                        <ellipse cx="145" cy="140" rx="18" ry="8" fill="#D69E2E"/>
+                        <ellipse cx="145" cy="135" rx="18" ry="8" fill="#ECC94B"/>
+                        <ellipse cx="145" cy="130" rx="18" ry="8" fill="#F6E05E"/>
+                      </svg>`
+            },
+            {
+                word: "WATER",
+                meaning: "น้ำ (ของเหลวใสสำหรับดื่ม คลายกระหาย)",
+                category: "เครื่องดื่ม (Drinks)",
+                missingIndex: 3, // E -> WAT_R
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Water Drop -->
+                        <path d="M100 40 C100 40 55 105 55 135 C55 160 75 180 100 180 C125 180 145 160 145 135 C145 105 100 40 100 40 Z" fill="#63B3ED"/>
+                        <!-- Highlight -->
+                        <path d="M80 120 C75 130 75 145 82 155" stroke="#BEE3F8" stroke-width="5" stroke-linecap="round" fill="none"/>
+                        <!-- Face -->
+                        <circle cx="92" cy="135" r="3.5" fill="#1A365D"/>
+                        <circle cx="112" cy="135" r="3.5" fill="#1A365D"/>
+                        <path d="M98 144 Q102 148 106 144" stroke="#1A365D" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                      </svg>`
+            },
+            {
+                word: "CHAIR",
+                meaning: "เก้าอี้ (เฟอร์นิเจอร์มี 4 ขาสำหรับนั่ง)",
+                category: "เครื่องใช้ (Furniture)",
+                missingIndex: 2, // A -> CH_IR
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Backrest -->
+                        <rect x="70" y="45" width="60" height="45" rx="6" fill="#4FD1C5"/>
+                        <line x1="82" y1="90" x2="82" y2="115" stroke="#285E61" stroke-width="5"/>
+                        <line x1="118" y1="90" x2="118" y2="115" stroke="#285E61" stroke-width="5"/>
+                        <!-- Seat -->
+                        <rect x="60" y="110" width="80" height="14" rx="4" fill="#319795"/>
+                        <!-- Legs -->
+                        <line x1="70" y1="124" x2="65" y2="170" stroke="#285E61" stroke-width="5" stroke-linecap="round"/>
+                        <line x1="130" y1="124" x2="135" y2="170" stroke="#285E61" stroke-width="5" stroke-linecap="round"/>
+                        <line x1="85" y1="124" x2="82" y2="165" stroke="#234E52" stroke-width="4" stroke-linecap="round"/>
+                        <line x1="115" y1="124" x2="118" y2="165" stroke="#234E52" stroke-width="4" stroke-linecap="round"/>
+                      </svg>`
+            },
+            {
+                word: "BREAD",
+                meaning: "ขนมปัง (อาหารทำจากแป้ง หอมกรุ่น)",
+                category: "อาหาร (Food)",
+                missingIndex: 2, // E -> BR_AD
+                svg: `<svg viewBox="0 0 200 200" class="w-36 h-36 drop-shadow-md">
+                        <!-- Toast Slice -->
+                        <path d="M60 70 C60 55 80 50 100 50 C120 50 140 55 140 70 C150 78 148 140 140 145 C130 150 70 150 60 145 C52 140 50 78 60 70 Z" fill="#D69E2E"/>
+                        <path d="M68 76 C68 64 82 60 100 60 C118 60 132 64 132 76 C140 84 138 132 132 138 C124 142 76 142 68 138 C62 132 60 84 68 76 Z" fill="#FEFCBF"/>
+                        <!-- Butter on top -->
+                        <rect x="88" y="90" width="24" height="20" rx="3" fill="#F6E05E"/>
+                        <!-- Eyes & Smile -->
+                        <circle cx="85" cy="115" r="3" fill="#744210"/>
+                        <circle cx="115" cy="115" r="3" fill="#744210"/>
+                        <path d="M96 122 Q100 126 104 122" stroke="#744210" stroke-width="2" fill="none" stroke-linecap="round"/>
+                      </svg>`
+            }
+        ];
+
+        /* ============================================================
+           2. WEB AUDIO API SYNTHESIZER (No external audio files needed)
+           ============================================================ */
+        class SoundFX {
+            constructor() {
+                this.ctx = null;
+                this.enabled = true;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    const AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if (AudioContext) {
+                        this.ctx = new AudioContext();
+                    }
+                }
+                if (this.ctx && this.ctx.state === 'suspended') {
+                    this.ctx.resume();
+                }
+            }
+
+            playCorrect() {
+                if (!this.enabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                // Sweet chime chord (C5 -> E5 -> G5)
+                [523.25, 659.25, 783.99].forEach((freq, i) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now + (i * 0.08));
+
+                    gain.gain.setValueAtTime(0, now + (i * 0.08));
+                    gain.gain.linearRampToValueAtTime(0.2, now + (i * 0.08) + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + (i * 0.08) + 0.35);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now + (i * 0.08));
+                    osc.stop(now + (i * 0.08) + 0.36);
+                });
+            }
+
+            playWrong() {
+                if (!this.enabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.linearRampToValueAtTime(140, now + 0.25);
+
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.25);
+
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+
+                osc.start(now);
+                osc.stop(now + 0.26);
+            }
+
+            playTimeout() {
+                if (!this.enabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const now = this.ctx.currentTime;
+                [200, 170].forEach((freq, idx) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(freq, now + (idx * 0.15));
+
+                    gain.gain.setValueAtTime(0.15, now + (idx * 0.15));
+                    gain.gain.linearRampToValueAtTime(0.01, now + (idx * 0.15) + 0.14);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(now + (idx * 0.15));
+                    osc.stop(now + (idx * 0.15) + 0.15);
+                });
+            }
+
+            playVictory() {
+                if (!this.enabled) return;
+                this.init();
+                if (!this.ctx) return;
+
+                const notes = [261.63, 329.63, 392.00, 523.25];
+                notes.forEach((freq, i) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime + (i * 0.12));
+
+                    gain.gain.setValueAtTime(0, this.ctx.currentTime + (i * 0.12));
+                    gain.gain.linearRampToValueAtTime(0.25, this.ctx.currentTime + (i * 0.12) + 0.03);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + (i * 0.12) + 0.45);
+
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+
+                    osc.start(this.ctx.currentTime + (i * 0.12));
+                    osc.stop(this.ctx.currentTime + (i * 0.12) + 0.46);
+                });
+            }
+        }
+
+        const sound = new SoundFX();
+
+        function toggleSound() {
+            sound.enabled = !sound.enabled;
+            const onIcon = document.getElementById('soundOnIcon');
+            const offIcon = document.getElementById('soundOffIcon');
+            if (sound.enabled) {
+                onIcon.classList.remove('hidden');
+                offIcon.classList.add('hidden');
+                sound.init();
+            } else {
+                onIcon.classList.add('hidden');
+                offIcon.classList.remove('hidden');
+            }
+        }
+
+        // Web Speech API for English pronounciation
+        function speakCurrentWord() {
+            if (!('speechSynthesis' in window)) return;
+            const item = shuffledQuestions[currentIndex];
+            if (!item) return;
+
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(item.word);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.85; // slightly slower for young learners
+            utterance.pitch = 1.1;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        /* ============================================================
+           3. GAME STATE AND LOGIC
+           ============================================================ */
+        const TOTAL_TIME = 20; // 20 seconds
+        let shuffledQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let currentStreak = 0;
+        let maxStreak = 0;
+        let timeLeft = TOTAL_TIME;
+        let timerInterval = null;
+        let isAnsweringBlocked = false;
+
+        // Shuffle utility
+        function shuffleArray(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        function startGame() {
+            sound.init();
+            shuffledQuestions = shuffleArray(VOCABULARY_LIST);
+            currentIndex = 0;
+            score = 0;
+            currentStreak = 0;
+            maxStreak = 0;
+            isAnsweringBlocked = false;
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('gameScreen').classList.remove('hidden');
+
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            if (currentIndex >= shuffledQuestions.length) {
+                endGame();
+                return;
+            }
+
+            isAnsweringBlocked = false;
+            const q = shuffledQuestions[currentIndex];
+            const missingLetter = q.word[q.missingIndex];
+
+            // Reset UI States
+            document.getElementById('questionCounter').innerText = `ข้อที่ ${currentIndex + 1} / ${shuffledQuestions.length}`;
+            document.getElementById('scoreDisplay').innerText = `คะแนน: ${score}`;
+            document.getElementById('categoryBadge').innerText = q.category;
+            document.getElementById('thaiMeaning').innerText = q.meaning;
+            document.getElementById('feedbackBanner').innerHTML = '';
+            document.getElementById('ttsButton').classList.add('hidden');
+
+            // Streak indicator
+            const streakBadge = document.getElementById('streakBadge');
+            if (currentStreak >= 2) {
+                streakBadge.classList.remove('hidden');
+                document.getElementById('streakDisplay').innerText = `${currentStreak}x ต่อเนื่อง!`;
+            } else {
+                streakBadge.classList.add('hidden');
+            }
+
+            // Mystery Illustration State (Gray mystery cloud with question mark)
+            const illustContainer = document.getElementById('illustrationGraphic');
+            illustContainer.innerHTML = `
+                <div class="flex flex-col items-center justify-center text-emerald-400/80 animate-gentle">
+                    <svg class="w-20 h-20" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/>
+                    </svg>
+                    <p class="text-xs font-thai text-emerald-600 mt-2 font-medium">ตอบถูกเพื่อเปิดภาพเฉลย 🎨</p>
+                </div>
+            `;
+
+            // Render Missing Word Slots
+            const wordContainer = document.getElementById('wordLettersContainer');
+            wordContainer.innerHTML = '';
+            for (let i = 0; i < q.word.length; i++) {
+                const charBox = document.createElement('div');
+                if (i === q.missingIndex) {
+                    charBox.id = 'missingSlot';
+                    charBox.className = 'w-11 h-14 sm:w-14 sm:h-18 rounded-2xl border-2 border-dashed border-emerald-400 bg-emerald-50 text-emerald-600 font-bold text-2xl sm:text-3xl flex items-center justify-center shadow-inner transition-all duration-300';
+                    charBox.innerText = '?';
+                } else {
+                    charBox.className = 'w-11 h-14 sm:w-14 sm:h-18 rounded-2xl bg-white border border-gray-200 text-gray-800 font-bold text-2xl sm:text-3xl flex items-center justify-center shadow-sm';
+                    charBox.innerText = q.word[i];
+                }
+                wordContainer.appendChild(charBox);
+            }
+
+            // Generate 4 Choices (1 correct + 3 distinct distractors)
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").filter(l => l !== missingLetter);
+            const distractors = shuffleArray(alphabet).slice(0, 3);
+            const choices = shuffleArray([missingLetter, ...distractors]);
+
+            const choicesGrid = document.getElementById('choicesGrid');
+            choicesGrid.innerHTML = '';
+            choices.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-choice py-3.5 sm:py-4 px-4 bg-white hover:bg-emerald-50/80 border-2 border-emerald-200 text-emerald-800 font-bold text-2xl sm:text-3xl rounded-2xl shadow-bouncy hover:shadow-bouncy-hover flex items-center justify-center transition-all';
+                btn.innerText = letter;
+                btn.onclick = () => handleAnswer(letter, btn);
+                choicesGrid.appendChild(btn);
+            });
+
+            // Start Timer (20 Seconds)
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = TOTAL_TIME;
+            updateTimerBar();
+
+            timerInterval = setInterval(() => {
+                timeLeft -= 0.1;
+                if (timeLeft <= 0) {
+                    timeLeft = 0;
+                    clearInterval(timerInterval);
+                    updateTimerBar();
+                    handleTimeout();
+                } else {
+                    updateTimerBar();
+                }
+            }, 100);
+        }
+
+        function updateTimerBar() {
+            const percent = (timeLeft / TOTAL_TIME) * 100;
+            const bar = document.getElementById('timerBar');
+            bar.style.width = `${percent}%`;
+
+            if (percent > 45) {
+                bar.className = 'bg-emerald-400 h-full rounded-full transition-all duration-100 ease-linear';
+            } else if (percent > 20) {
+                bar.className = 'bg-amber-400 h-full rounded-full transition-all duration-100 ease-linear';
+            } else {
+                bar.className = 'bg-rose-500 h-full rounded-full transition-all duration-100 ease-linear';
+            }
+        }
+
+        function handleAnswer(selectedLetter, clickedBtn) {
+            if (isAnsweringBlocked) return;
+            isAnsweringBlocked = true;
+            clearInterval(timerInterval);
+
+            const q = shuffledQuestions[currentIndex];
+            const correctLetter = q.word[q.missingIndex];
+            const missingSlot = document.getElementById('missingSlot');
+            const choices = document.getElementById('choicesGrid').children;
+
+            if (selectedLetter === correctLetter) {
+                // Correct Answer!
+                score += 1;
+                currentStreak += 1;
+                if (currentStreak > maxStreak) maxStreak = currentStreak;
+
+                sound.playCorrect();
+                speakCurrentWord();
+
+                // Slot and Button Styling
+                missingSlot.innerText = correctLetter;
+                missingSlot.className = 'w-11 h-14 sm:w-14 sm:h-18 rounded-2xl bg-emerald-500 text-white font-bold text-2xl sm:text-3xl flex items-center justify-center shadow-md animate-pop';
+                clickedBtn.classList.remove('bg-white', 'border-emerald-200', 'text-emerald-800');
+                clickedBtn.classList.add('bg-emerald-500', 'border-emerald-600', 'text-white', 'scale-105');
+
+                // Reveal SVG Illustration
+                revealIllustration(q.svg);
+
+                // Confetti burst
+                triggerConfetti();
+
+                // Banner
+                document.getElementById('feedbackBanner').innerHTML = `
+                    <span class="text-emerald-600 animate-pop font-thai flex items-center gap-1.5">
+                        <span class="text-2xl">✨</span> ถูกต้องแล้วครับ! เก่งมากๆ (+1 คะแนน)
+                    </span>
+                `;
+            } else {
+                // Wrong Answer
+                currentStreak = 0;
+                sound.playWrong();
+
+                clickedBtn.classList.remove('bg-white', 'border-emerald-200', 'text-emerald-800');
+                clickedBtn.classList.add('bg-rose-500', 'border-rose-600', 'text-white');
+
+                // Highlight Correct Button
+                for (let btn of choices) {
+                    if (btn.innerText === correctLetter) {
+                        btn.classList.add('bg-emerald-100', 'border-emerald-400', 'text-emerald-700', 'ring-2', 'ring-emerald-400');
+                    }
+                }
+
+                // Show correct letter in slot
+                missingSlot.innerText = correctLetter;
+                missingSlot.className = 'w-11 h-14 sm:w-14 sm:h-18 rounded-2xl bg-amber-400 text-white font-bold text-2xl sm:text-3xl flex items-center justify-center shadow-md';
+
+                revealIllustration(q.svg);
+                speakCurrentWord();
+
+                document.getElementById('feedbackBanner').innerHTML = `
+                    <span class="text-rose-600 font-thai flex items-center gap-1">
+                        <span>❌</span> ไม่เป็นไรนะ! ตัวอักษรที่ถูกต้องคือ <strong>"${correctLetter}"</strong>
+                    </span>
+                `;
+            }
+
+            document.getElementById('scoreDisplay').innerText = `คะแนน: ${score}`;
+
+            // Next question after a delay
+            setTimeout(() => {
+                currentIndex++;
+                loadQuestion();
+            }, 2500);
+        }
+
+        function handleTimeout() {
+            if (isAnsweringBlocked) return;
+            isAnsweringBlocked = true;
+            currentStreak = 0;
+
+            sound.playTimeout();
+            const q = shuffledQuestions[currentIndex];
+            const correctLetter = q.word[q.missingIndex];
+            const missingSlot = document.getElementById('missingSlot');
+            const choices = document.getElementById('choicesGrid').children;
+
+            // Highlight Correct
+            for (let btn of choices) {
+                if (btn.innerText === correctLetter) {
+                    btn.classList.add('bg-emerald-400', 'text-white');
+                }
+            }
+
+            missingSlot.innerText = correctLetter;
+            missingSlot.className = 'w-11 h-14 sm:w-14 sm:h-18 rounded-2xl bg-amber-400 text-white font-bold text-2xl sm:text-3xl flex items-center justify-center shadow-md';
+
+            revealIllustration(q.svg);
+            speakCurrentWord();
+
+            document.getElementById('feedbackBanner').innerHTML = `
+                <span class="text-amber-600 font-thai flex items-center gap-1">
+                    <span>⏰</span> หมดเวลา! ตัวอักษรที่ถูกต้องคือ <strong>"${correctLetter}"</strong>
+                </span>
+            `;
+
+            setTimeout(() => {
+                currentIndex++;
+                loadQuestion();
+            }, 2500);
+        }
+
+        function revealIllustration(svgContent) {
+            const container = document.getElementById('illustrationGraphic');
+            container.innerHTML = `<div class="animate-pop">${svgContent}</div>`;
+            document.getElementById('ttsButton').classList.remove('hidden');
+        }
+
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 50,
+                    spread: 60,
+                    origin: { y: 0.65 },
+                    colors: ['#A8E6CF', '#FDFAF0', '#FFD3B6', '#FF8B94', '#FFAA33']
+                });
+            }
+        }
+
+        /* ============================================================
+           4. GAME OVER & SUMMARY SCREEN
+           ============================================================ */
+        function endGame() {
+            clearInterval(timerInterval);
+            sound.playVictory();
+
+            document.getElementById('gameScreen').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            const total = shuffledQuestions.length;
+            const percent = Math.round((score / total) * 100);
+
+            document.getElementById('finalScoreText').innerText = `${score} / ${total}`;
+            document.getElementById('maxStreakText').innerText = `${maxStreak} ข้อติด`;
+            document.getElementById('accuracyText').innerText = `${percent}%`;
+
+            const emojiEl = document.getElementById('resultEmoji');
+            const titleEl = document.getElementById('resultTitle');
+            const subtitleEl = document.getElementById('resultSubtitle');
+            const starsEl = document.getElementById('starsContainer');
+
+            if (percent >= 80) {
+                emojiEl.innerText = "🏆";
+                titleEl.innerText = "สุดยอดอัจฉริยะตัวน้อย!";
+                subtitleEl.innerText = "น้องมีความแม่นยำทางคำศัพท์สูงมาก ขอปรบมือให้เลยครับ!";
+                starsEl.innerHTML = `<span class="animate-bounce">⭐</span><span class="animate-bounce delay-100">⭐</span><span class="animate-bounce delay-200">⭐</span>`;
+                // Celebration grand confetti
+                if (typeof confetti === 'function') {
+                    confetti({ particleCount: 100, spread: 80, origin: { y: 0.5 } });
+                }
+            } else if (percent >= 50) {
+                emojiEl.innerText = "🌟";
+                titleEl.innerText = "เก่งมากเลยครับ!";
+                subtitleEl.innerText = "ทำได้ดีมาก ฝึกฝนอีกนิดจะกลายเป็นเซียนคำศัพท์แน่นอน";
+                starsEl.innerHTML = `<span>⭐</span><span>⭐</span><span class="opacity-30">⭐</span>`;
+            } else {
+                emojiEl.innerText = "🌱";
+                titleEl.innerText = "พยายามได้ดีมากครับ!";
+                subtitleEl.innerText = "การเรียนรู้ต้องใช้เวลา ลองเล่นอีกรอบเพื่อจำคำศัพท์ให้แม่นขึ้นนะ!";
+                starsEl.innerHTML = `<span>⭐</span><span class="opacity-30">⭐</span><span class="opacity-30">⭐</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
